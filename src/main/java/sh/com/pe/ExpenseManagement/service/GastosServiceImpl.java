@@ -61,7 +61,6 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
         gasto.setTipo_gasto(dto.getTipo_gasto());
         gasto.setCategorias_gasto(categorias_gasto);
         gasto.setGasto(dto.getGasto());
-        gasto.setFecha(dto.getFecha());
 
         Gastos actualizarGasto = gastosRepository.save(gasto);
 
