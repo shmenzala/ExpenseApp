@@ -9,4 +9,8 @@ import sh.com.pe.ExpenseManagement.dto.GastosDto;
  */
 public interface GastosService extends GenericService<GastosDto>{
     
+     public GastosDto create(GastosDto dto, Integer id_catgasto);
+     
+     public GastosDto update(Integer id, GastosDto dto, Integer id_catgasto);
+    
 }

@@ -6,7 +6,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
+import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.model.Gastos;
+import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
 import sh.com.pe.ExpenseManagement.repository.GastosRepository;
 
 /**
@@ -18,14 +20,20 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
     private final GastosRepository gastosRepository;
 
-    public GastosServiceImpl(GastosRepository gastosRepository, ModelMapper modelMapper) {
+    private final Categorias_gastoRepository categorias_gastoRepository;
+
+    public GastosServiceImpl(GastosRepository gastosRepository, Categorias_gastoRepository categorias_gastoRepository, ModelMapper modelMapper) {
         super(modelMapper);
         this.gastosRepository = gastosRepository;
+        this.categorias_gastoRepository = categorias_gastoRepository;
     }
 
     @Override
-    public GastosDto create(GastosDto dto) {
+    public GastosDto create(GastosDto dto, Integer id_catgasto) {
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto).orElseThrow();
+
         Gastos gasto = toEntity(dto, Gastos.class);
+        gasto.setCategorias_gasto(categorias_gasto);
 
         Gastos nuevoGasto = gastosRepository.save(gasto);
 
@@ -45,8 +53,15 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     }
 
     @Override
-    public GastosDto update(Integer id, GastosDto dto) {
+    public GastosDto update(Integer id, GastosDto dto, Integer id_catgasto) {
         Gastos gasto = gastosRepository.findById(id).orElseThrow();
+
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto).orElseThrow();
+
+        gasto.setTipo_gasto(dto.getTipo_gasto());
+        gasto.setCategorias_gasto(categorias_gasto);
+        gasto.setGasto(dto.getGasto());
+        gasto.setFecha(dto.getFecha());
 
         Gastos actualizarGasto = gastosRepository.save(gasto);
 
@@ -57,6 +72,16 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     public void delete(Integer id) {
         Gastos gasto = gastosRepository.findById(id).orElseThrow();
         gastosRepository.delete(gasto);
+    }
+
+    @Override
+    public GastosDto create(GastosDto dto) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public GastosDto update(Integer id, GastosDto dto) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
