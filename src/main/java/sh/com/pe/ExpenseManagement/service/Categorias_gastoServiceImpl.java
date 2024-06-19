@@ -28,7 +28,7 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
         Categorias_gasto categoria_gasto = toEntity(dto, Categorias_gasto.class);
 
         Categorias_gasto nuevaCategoria_gasto = categorias_gastoRepository.save(categoria_gasto);
-
+        
         return toDto(nuevaCategoria_gasto, Categorias_gastoDto.class);
     }
 
@@ -47,6 +47,8 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
     @Override
     public Categorias_gastoDto update(Integer id, Categorias_gastoDto dto) {
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        
+        categorias_gasto.setNombre(dto.getNombre());
         
         Categorias_gasto actualizarCategoria_gasto = categorias_gastoRepository.save(categorias_gasto);
 
