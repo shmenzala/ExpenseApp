@@ -1,6 +1,7 @@
 package sh.com.pe.ExpenseManagement.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
@@ -15,36 +16,47 @@ import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
 @Service
 public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Categorias_gastoDto> implements Categorias_gastoService {
 
-    private final Categorias_gastoRepository Categorias_gastoRepository;
+    private final Categorias_gastoRepository categorias_gastoRepository;
 
-    public Categorias_gastoServiceImpl(Categorias_gastoRepository Categorias_gastoRepository, ModelMapper modelMapper) {
+    public Categorias_gastoServiceImpl(Categorias_gastoRepository categorias_gastoRepository, ModelMapper modelMapper) {
         super(modelMapper);
-        this.Categorias_gastoRepository = Categorias_gastoRepository;
+        this.categorias_gastoRepository = categorias_gastoRepository;
     }
 
     @Override
     public Categorias_gastoDto create(Categorias_gastoDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Categorias_gasto categoria_gasto = toEntity(dto, Categorias_gasto.class);
+
+        Categorias_gasto nuevaCategoria_gasto = categorias_gastoRepository.save(categoria_gasto);
+
+        return toDto(nuevaCategoria_gasto, Categorias_gastoDto.class);
     }
 
     @Override
     public List<Categorias_gastoDto> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Categorias_gasto> categorias_gasto = categorias_gastoRepository.findAll();
+        return categorias_gasto.stream().map(categoria_gasto -> toDto(categoria_gasto, Categorias_gastoDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public Categorias_gastoDto findById(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Categorias_gastoDto findById(Integer id) {
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        return toDto(categorias_gasto, Categorias_gastoDto.class);
     }
 
     @Override
-    public Categorias_gastoDto update(String id, Categorias_gastoDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Categorias_gastoDto update(Integer id, Categorias_gastoDto dto) {
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        
+        Categorias_gasto actualizarCategoria_gasto = categorias_gastoRepository.save(categorias_gasto);
+
+        return toDto(actualizarCategoria_gasto, Categorias_gastoDto.class);
     }
 
     @Override
-    public Categorias_gastoDto delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void delete(Integer id) {
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        categorias_gastoRepository.delete(categorias_gasto);
     }
 
 }

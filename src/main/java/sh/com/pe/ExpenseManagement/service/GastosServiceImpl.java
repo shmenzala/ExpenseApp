@@ -1,6 +1,7 @@
 package sh.com.pe.ExpenseManagement.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
@@ -24,27 +25,38 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
     @Override
     public GastosDto create(GastosDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Gastos gasto = toEntity(dto, Gastos.class);
+
+        Gastos nuevoGasto = gastosRepository.save(gasto);
+
+        return toDto(nuevoGasto, GastosDto.class);
     }
 
     @Override
     public List<GastosDto> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Gastos> gastos = gastosRepository.findAll();
+        return gastos.stream().map(gasto -> toDto(gasto, GastosDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public GastosDto findById(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public GastosDto findById(Integer id) {
+        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+        return toDto(gasto, GastosDto.class);
     }
 
     @Override
-    public GastosDto update(String id, GastosDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public GastosDto update(Integer id, GastosDto dto) {
+        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+
+        Gastos actualizarGasto = gastosRepository.save(gasto);
+
+        return toDto(actualizarGasto, GastosDto.class);
     }
 
     @Override
-    public GastosDto delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void delete(Integer id) {
+        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+        gastosRepository.delete(gasto);
     }
 
 }
