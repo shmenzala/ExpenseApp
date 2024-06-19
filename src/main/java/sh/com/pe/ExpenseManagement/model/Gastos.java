@@ -35,7 +35,7 @@ public class Gastos implements Serializable {
     private Categorias_gasto categorias_gasto;
 
     @Column(name = "gasto")
-    private int gasto;
+    private double gasto;
 
     @Column(name = "fecha")
     private LocalDate fecha;
@@ -43,7 +43,7 @@ public class Gastos implements Serializable {
     public Gastos() {
     }
 
-    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, int gasto, LocalDate fecha) {
+    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, double gasto, LocalDate fecha) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
@@ -75,11 +75,11 @@ public class Gastos implements Serializable {
         this.categorias_gasto = categorias_gasto;
     }
 
-    public int getGasto() {
+    public double getGasto() {
         return gasto;
     }
 
-    public void setGasto(int gasto) {
+    public void setGasto(double gasto) {
         this.gasto = gasto;
     }
 

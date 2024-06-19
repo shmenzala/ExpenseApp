@@ -11,18 +11,17 @@ public class GastosDto {
     private int id;
     private String tipo_gasto;
     private Categorias_gastoDto categorias_gasto;
-    private int gasto;
-    private LocalDate fecha;
+    private double gasto;
+    private LocalDate fecha = LocalDate.now();
 
     public GastosDto() {
     }
 
-    public GastosDto(int id, String tipo_gasto, Categorias_gastoDto categorias_gasto, int gasto, LocalDate fecha) {
+    public GastosDto(int id, String tipo_gasto, Categorias_gastoDto categorias_gasto, double gasto) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
         this.gasto = gasto;
-        this.fecha = fecha;
     }
 
     public int getId() {
@@ -49,11 +48,11 @@ public class GastosDto {
         this.categorias_gasto = categorias_gasto;
     }
 
-    public int getGasto() {
+    public double getGasto() {
         return gasto;
     }
 
-    public void setGasto(int gasto) {
+    public void setGasto(double gasto) {
         this.gasto = gasto;
     }
 
@@ -64,7 +63,5 @@ public class GastosDto {
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
-    
-    
 
 }
