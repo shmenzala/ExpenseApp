@@ -13,10 +13,10 @@ public interface GenericService<T> {
     
     public List<T> findAll();
     
-    public T findById(String id);
+    public T findById(Integer id);
     
-    public T update(String id, T dto);
+    public T update(Integer id, T dto);
     
-    public T delete(String id);
+    public void delete(Integer id);
     
 }
