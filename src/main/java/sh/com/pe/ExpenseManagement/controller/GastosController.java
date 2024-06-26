@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
+import sh.com.pe.ExpenseManagement.dto.ResumenDto;
 import sh.com.pe.ExpenseManagement.service.GastosService;
 
 /**
@@ -34,7 +35,7 @@ public class GastosController {
             @RequestBody GastosDto dto) {
         return new ResponseEntity<>(gastosService.create(dto, id_catgasto), HttpStatus.OK);
     }
-
+    
     @GetMapping
     public ResponseEntity<List<GastosDto>> listarGastos() {
         return new ResponseEntity<>(gastosService.findAll(), HttpStatus.OK);
@@ -59,6 +60,11 @@ public class GastosController {
             @PathVariable(value = "id") Integer id) {
         gastosService.delete(id);
         return new ResponseEntity<>("Eliminación exitosa del gasto", HttpStatus.OK);
+    }
+    
+    @GetMapping("/summary")
+    public ResponseEntity<ResumenDto> obtenerSummary() {
+        return new ResponseEntity<>(gastosService.showSummary(), HttpStatus.OK);
     }
 
 }
