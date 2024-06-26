@@ -6,6 +6,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
+import sh.com.pe.ExpenseManagement.dto.ResumenDto;
+import sh.com.pe.ExpenseManagement.dto.Resumen_gastos_totalesDto;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.model.Gastos;
 import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
@@ -33,7 +35,9 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto).orElseThrow();
 
         Gastos gasto = toEntity(dto, Gastos.class);
+
         gasto.setCategorias_gasto(categorias_gasto);
+        gasto.setTotal(dto.getGasto() * dto.getCantidad());
 
         Gastos nuevoGasto = gastosRepository.save(gasto);
 
@@ -61,6 +65,8 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
         gasto.setTipo_gasto(dto.getTipo_gasto());
         gasto.setCategorias_gasto(categorias_gasto);
         gasto.setGasto(dto.getGasto());
+        gasto.setCantidad(dto.getCantidad());
+        gasto.setTotal(dto.getGasto() * dto.getCantidad());
 
         Gastos actualizarGasto = gastosRepository.save(gasto);
 
@@ -81,6 +87,19 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     @Override
     public GastosDto update(Integer id, GastosDto dto) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ResumenDto showSummary() {
+        List<Resumen_gastos_totalesDto> mayoresDtos = gastosRepository.obtenerResumenGastosTotalesMaximos();
+        List<Resumen_gastos_totalesDto> menoresDtos = gastosRepository.obtenerResumenGastosTotalesMinimos();
+
+        ResumenDto resumenDto = new ResumenDto();
+
+        resumenDto.setGastos_totales_maximos(mayoresDtos);
+        resumenDto.setGastos_totales_minimos(menoresDtos);
+
+        return resumenDto;
     }
 
 }
