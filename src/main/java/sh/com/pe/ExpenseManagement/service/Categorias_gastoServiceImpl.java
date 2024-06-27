@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.Categorias_gastoDto;
+import sh.com.pe.ExpenseManagement.exceptions.ResourceNotFoundException;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
 import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
@@ -45,13 +46,15 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
 
     @Override
     public Categorias_gastoDto findById(Integer id) {
-        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id.toString()));
         return toDto(categorias_gasto, Categorias_gastoDto.class);
     }
 
     @Override
     public Categorias_gastoDto update(Integer id, Categorias_gastoDto dto) {
-        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id.toString()));
 
         categorias_gasto.setNombre(dto.getNombre());
 
@@ -62,19 +65,20 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
 
     @Override
     public void delete(Integer id) {
-        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id.toString()));
         categorias_gastoRepository.delete(categorias_gasto);
     }
 
     @Override
-    public PageableDataDto findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PageableDataDto<Categorias_gastoDto> findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        
+
         Page<Categorias_gasto> categorias_gastosPage = categorias_gastoRepository.findAll(pageable);
-        
+
         List<Categorias_gastoDto> content = categorias_gastosPage.getContent().stream().map(categoria_gasto -> toDto(categoria_gasto, Categorias_gastoDto.class)).collect(Collectors.toList());
-        
+
         PageableDataDto pageableDataDto = new PageableDataDto();
 
         pageableDataDto.setContent(content);
@@ -83,9 +87,9 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
         pageableDataDto.setTotalElements(categorias_gastosPage.getTotalElements());
         pageableDataDto.setTotalPages(categorias_gastosPage.getTotalPages());
         pageableDataDto.setLast(categorias_gastosPage.isLast());
-        
+
         return pageableDataDto;
 
     }
-    
+
 }

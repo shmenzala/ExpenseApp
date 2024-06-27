@@ -12,6 +12,7 @@ import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
 import sh.com.pe.ExpenseManagement.dto.ResumenDto;
 import sh.com.pe.ExpenseManagement.dto.Resumen_gastos_totalesDto;
+import sh.com.pe.ExpenseManagement.exceptions.ResourceNotFoundException;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.model.Gastos;
 import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
@@ -37,7 +38,8 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
     @Override
     public GastosDto create(GastosDto dto, Integer id_catgasto) {
-        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto).orElseThrow();
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
+                .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
         Gastos gasto = toEntity(dto, Gastos.class);
 
@@ -57,15 +59,18 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
     @Override
     public GastosDto findById(Integer id) {
-        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+        Gastos gasto = gastosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
         return toDto(gasto, GastosDto.class);
     }
 
     @Override
     public GastosDto update(Integer id, GastosDto dto, Integer id_catgasto) {
-        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+        Gastos gasto = gastosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
 
-        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto).orElseThrow();
+        Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
+                .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
         gasto.setTipo_gasto(dto.getTipo_gasto());
         gasto.setCategorias_gasto(categorias_gasto);
@@ -80,12 +85,13 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
     @Override
     public void delete(Integer id) {
-        Gastos gasto = gastosRepository.findById(id).orElseThrow();
+        Gastos gasto = gastosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
         gastosRepository.delete(gasto);
     }
 
     @Override
-    public PageableDataDto findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PageableDataDto<GastosDto> findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
