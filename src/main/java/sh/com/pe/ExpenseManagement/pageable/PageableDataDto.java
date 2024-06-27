@@ -5,10 +5,11 @@ import java.util.List;
 /**
  *
  * @author shmen
+ * @param <T> pageable model
  */
-public class PageableDataDto {
+public class PageableDataDto<T> {
 
-    private List<?> content;
+    private List<T> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;
@@ -18,7 +19,7 @@ public class PageableDataDto {
     public PageableDataDto() {
     }
 
-    public PageableDataDto(List<?> content, int pageNumber, int pageSize, long totalElements, long totalPages, boolean last) {
+    public PageableDataDto(List<T> content, int pageNumber, int pageSize, long totalElements, long totalPages, boolean last) {
         this.content = content;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
@@ -27,11 +28,11 @@ public class PageableDataDto {
         this.last = last;
     }
 
-    public List<?> getContent() {
+    public List<T> getContent() {
         return content;
     }
 
-    public void setContent(List<?> content) {
+    public void setContent(List<T> content) {
         this.content = content;
     }
 

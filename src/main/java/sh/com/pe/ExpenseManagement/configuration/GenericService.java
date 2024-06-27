@@ -20,6 +20,6 @@ public interface GenericService<T> {
 
     public void delete(Integer id);
 
-    public PageableDataDto findAllPagination(int pageNumber, int pageSize, String sortBy, String sortDir);
+    public PageableDataDto<T> findAllPagination(int pageNumber, int pageSize, String sortBy, String sortDir);
 
 }
