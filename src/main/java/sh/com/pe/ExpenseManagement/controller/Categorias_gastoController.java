@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sh.com.pe.ExpenseManagement.dto.Categorias_gastoDto;
+import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
+import sh.com.pe.ExpenseManagement.pageable.PageableValues;
 import sh.com.pe.ExpenseManagement.service.Categorias_gastoService;
 
 /**
@@ -35,6 +38,15 @@ public class Categorias_gastoController {
     }
 
     @GetMapping
+    public ResponseEntity<PageableDataDto> listarCategorias_gastoPaginados(
+            @RequestParam(value = "pageNo", defaultValue = PageableValues.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = PageableValues.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = PageableValues.DEFAULT_ORDER_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = PageableValues.DEFAULT_ORDER_DIRECTION, required = false) String sortDir) {
+        return new ResponseEntity<>(categorias_gastoService.findAllPagination(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
     public ResponseEntity<List<Categorias_gastoDto>> listarCategorias_gasto() {
         return new ResponseEntity<>(categorias_gastoService.findAll(), HttpStatus.OK);
     }
