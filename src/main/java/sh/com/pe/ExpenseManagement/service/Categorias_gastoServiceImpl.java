@@ -3,10 +3,15 @@ package sh.com.pe.ExpenseManagement.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.Categorias_gastoDto;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
+import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
 import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
 
 /**
@@ -28,7 +33,7 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
         Categorias_gasto categoria_gasto = toEntity(dto, Categorias_gasto.class);
 
         Categorias_gasto nuevaCategoria_gasto = categorias_gastoRepository.save(categoria_gasto);
-        
+
         return toDto(nuevaCategoria_gasto, Categorias_gastoDto.class);
     }
 
@@ -47,9 +52,9 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
     @Override
     public Categorias_gastoDto update(Integer id, Categorias_gastoDto dto) {
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id).orElseThrow();
-        
+
         categorias_gasto.setNombre(dto.getNombre());
-        
+
         Categorias_gasto actualizarCategoria_gasto = categorias_gastoRepository.save(categorias_gasto);
 
         return toDto(actualizarCategoria_gasto, Categorias_gastoDto.class);
@@ -61,4 +66,26 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
         categorias_gastoRepository.delete(categorias_gasto);
     }
 
+    @Override
+    public PageableDataDto findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        
+        Page<Categorias_gasto> categorias_gastosPage = categorias_gastoRepository.findAll(pageable);
+        
+        List<Categorias_gastoDto> content = categorias_gastosPage.getContent().stream().map(categoria_gasto -> toDto(categoria_gasto, Categorias_gastoDto.class)).collect(Collectors.toList());
+        
+        PageableDataDto pageableDataDto = new PageableDataDto();
+
+        pageableDataDto.setContent(content);
+        pageableDataDto.setPageNumber(categorias_gastosPage.getNumber());
+        pageableDataDto.setPageSize(categorias_gastosPage.getSize());
+        pageableDataDto.setTotalElements(categorias_gastosPage.getTotalElements());
+        pageableDataDto.setTotalPages(categorias_gastosPage.getTotalPages());
+        pageableDataDto.setLast(categorias_gastosPage.isLast());
+        
+        return pageableDataDto;
+
+    }
+    
 }

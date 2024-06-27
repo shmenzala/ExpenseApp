@@ -3,6 +3,10 @@ package sh.com.pe.ExpenseManagement.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
@@ -10,6 +14,7 @@ import sh.com.pe.ExpenseManagement.dto.ResumenDto;
 import sh.com.pe.ExpenseManagement.dto.Resumen_gastos_totalesDto;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.model.Gastos;
+import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
 import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
 import sh.com.pe.ExpenseManagement.repository.GastosRepository;
 
@@ -77,6 +82,27 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     public void delete(Integer id) {
         Gastos gasto = gastosRepository.findById(id).orElseThrow();
         gastosRepository.delete(gasto);
+    }
+
+    @Override
+    public PageableDataDto findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Gastos> gastosPage = gastosRepository.findAll(pageable);
+
+        List<GastosDto> content = gastosPage.getContent().stream().map(gasto -> toDto(gasto, GastosDto.class)).collect(Collectors.toList());
+
+        PageableDataDto pageableDataDto = new PageableDataDto();
+
+        pageableDataDto.setContent(content);
+        pageableDataDto.setPageNumber(gastosPage.getNumber());
+        pageableDataDto.setPageSize(gastosPage.getSize());
+        pageableDataDto.setTotalElements(gastosPage.getTotalElements());
+        pageableDataDto.setTotalPages(gastosPage.getTotalPages());
+        pageableDataDto.setLast(gastosPage.isLast());
+
+        return pageableDataDto;
     }
 
     @Override
