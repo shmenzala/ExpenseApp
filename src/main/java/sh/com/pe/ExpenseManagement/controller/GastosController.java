@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
+import sh.com.pe.ExpenseManagement.dto.GastosDtoRequest;
 import sh.com.pe.ExpenseManagement.dto.ResumenDto;
 import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
 import sh.com.pe.ExpenseManagement.pageable.PageableValues;
@@ -35,7 +36,7 @@ public class GastosController {
     @PostMapping("/{id_catgasto}")
     public ResponseEntity<GastosDto> crearGasto(
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
-            @RequestBody GastosDto dto) {
+            @RequestBody GastosDtoRequest dto) {
         return new ResponseEntity<>(gastosService.create(dto, id_catgasto), HttpStatus.OK);
     }
 
@@ -63,7 +64,7 @@ public class GastosController {
     public ResponseEntity<GastosDto> actualizarGasto(
             @PathVariable(value = "id") Integer id,
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
-            @RequestBody GastosDto dto) {
+            @RequestBody GastosDtoRequest dto) {
         return new ResponseEntity<>(gastosService.update(id, dto, id_catgasto), HttpStatus.OK);
     }
 
