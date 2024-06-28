@@ -7,8 +7,9 @@ import org.modelmapper.ModelMapper;
  * @author shmen
  * @param <T1> clases MODEL
  * @param <T2> clases DTO
+ * @param <T3> clases DTO REQUEST
  */
-public class Mapper<T1, T2> {
+public class Mapper<T1, T2, T3> {
     
     private final ModelMapper modelMapper;
 
@@ -16,7 +17,7 @@ public class Mapper<T1, T2> {
         this.modelMapper = modelMapper;
     }
 
-    public T1 toEntity (T2 dto, Class<T1> clase){
+    public T1 toEntity (T3 dto, Class<T1> clase){
         T1 entity = modelMapper.map(dto, clase);
         return entity;
     }
