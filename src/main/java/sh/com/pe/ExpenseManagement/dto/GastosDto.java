@@ -14,7 +14,7 @@ public class GastosDto {
     private double gasto;
     private Integer cantidad;
     private double total;
-    private LocalDate fecha = LocalDate.now();
+    private LocalDate fecha;
 
     public GastosDto() {
     }
