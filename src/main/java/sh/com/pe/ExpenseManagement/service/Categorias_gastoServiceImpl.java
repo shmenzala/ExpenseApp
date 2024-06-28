@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.Categorias_gastoDto;
+import sh.com.pe.ExpenseManagement.dto.Categorias_gastoDtoRequest;
 import sh.com.pe.ExpenseManagement.exceptions.ResourceNotFoundException;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
@@ -20,7 +21,7 @@ import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
  * @author shmen
  */
 @Service
-public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Categorias_gastoDto> implements Categorias_gastoService {
+public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Categorias_gastoDto, Categorias_gastoDtoRequest> implements Categorias_gastoService {
 
     private final Categorias_gastoRepository categorias_gastoRepository;
 
@@ -30,7 +31,7 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
     }
 
     @Override
-    public Categorias_gastoDto create(Categorias_gastoDto dto) {
+    public Categorias_gastoDto create(Categorias_gastoDtoRequest dto) {
         Categorias_gasto categoria_gasto = toEntity(dto, Categorias_gasto.class);
 
         Categorias_gasto nuevaCategoria_gasto = categorias_gastoRepository.save(categoria_gasto);
@@ -52,7 +53,7 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
     }
 
     @Override
-    public Categorias_gastoDto update(Integer id, Categorias_gastoDto dto) {
+    public Categorias_gastoDto update(Integer id, Categorias_gastoDtoRequest dto) {
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id.toString()));
 

@@ -1,5 +1,6 @@
 package sh.com.pe.ExpenseManagement.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sh.com.pe.ExpenseManagement.configuration.Mapper;
 import sh.com.pe.ExpenseManagement.dto.GastosDto;
+import sh.com.pe.ExpenseManagement.dto.GastosDtoRequest;
 import sh.com.pe.ExpenseManagement.dto.ResumenDto;
 import sh.com.pe.ExpenseManagement.dto.Resumen_gastos_totalesDto;
 import sh.com.pe.ExpenseManagement.exceptions.ResourceNotFoundException;
@@ -24,7 +26,7 @@ import sh.com.pe.ExpenseManagement.repository.GastosRepository;
  * @author shmen
  */
 @Service
-public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements GastosService {
+public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoRequest> implements GastosService {
 
     private final GastosRepository gastosRepository;
 
@@ -37,7 +39,7 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     }
 
     @Override
-    public GastosDto create(GastosDto dto, Integer id_catgasto) {
+    public GastosDto create(GastosDtoRequest dto, Integer id_catgasto) {
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
@@ -45,7 +47,8 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
 
         gasto.setCategorias_gasto(categorias_gasto);
         gasto.setTotal(dto.getGasto() * dto.getCantidad());
-
+        gasto.setFecha(LocalDate.now());
+        
         Gastos nuevoGasto = gastosRepository.save(gasto);
 
         return toDto(nuevoGasto, GastosDto.class);
@@ -65,7 +68,7 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     }
 
     @Override
-    public GastosDto update(Integer id, GastosDto dto, Integer id_catgasto) {
+    public GastosDto update(Integer id, GastosDtoRequest dto, Integer id_catgasto) {
         Gastos gasto = gastosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
 
@@ -112,15 +115,15 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto> implements Gast
     }
 
     @Override
-    public GastosDto create(GastosDto dto) {
+    public GastosDto create(GastosDtoRequest dto) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public GastosDto update(Integer id, GastosDto dto) {
+    public GastosDto update(Integer id, GastosDtoRequest dto) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     @Override
     public ResumenDto showSummary() {
         List<Resumen_gastos_totalesDto> mayoresDtos = gastosRepository.obtenerResumenGastosTotalesMaximos();
