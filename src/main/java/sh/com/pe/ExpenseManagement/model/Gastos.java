@@ -39,9 +39,9 @@ public class Gastos implements Serializable {
 
     @Column(name = "cantidad")
     private Integer cantidad;
-    
+
     @Column(name = "total")
-    private double total;
+    private Double total;
 
     @Column(name = "fecha")
     private LocalDate fecha;
@@ -49,7 +49,7 @@ public class Gastos implements Serializable {
     public Gastos() {
     }
 
-    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, double gasto, Integer cantidad, double total, LocalDate fecha) {
+    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, double gasto, Integer cantidad, Double total, LocalDate fecha) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
@@ -99,11 +99,11 @@ public class Gastos implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public double getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

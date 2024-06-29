@@ -11,7 +11,7 @@ public class GastosDto {
     private int id;
     private String tipo_gasto;
     private Categorias_gastoDto categorias_gasto;
-    private double gasto;
+    private Double gasto;
     private Integer cantidad;
     private double total;
     private LocalDate fecha;
@@ -19,13 +19,14 @@ public class GastosDto {
     public GastosDto() {
     }
 
-    public GastosDto(int id, String tipo_gasto, Categorias_gastoDto categorias_gasto, double gasto, Integer cantidad, double total) {
+    public GastosDto(int id, String tipo_gasto, Categorias_gastoDto categorias_gasto, Double gasto, Integer cantidad, double total, LocalDate fecha) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
         this.gasto = gasto;
         this.cantidad = cantidad;
         this.total = total;
+        this.fecha = fecha;
     }
 
     public int getId() {
@@ -52,11 +53,11 @@ public class GastosDto {
         this.categorias_gasto = categorias_gasto;
     }
 
-    public double getGasto() {
+    public Double getGasto() {
         return gasto;
     }
 
-    public void setGasto(double gasto) {
+    public void setGasto(Double gasto) {
         this.gasto = gasto;
     }
 
