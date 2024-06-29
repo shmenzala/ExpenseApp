@@ -1,5 +1,6 @@
 package sh.com.pe.ExpenseManagement.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class GastosController {
     @PostMapping("/{id_catgasto}")
     public ResponseEntity<GastosDto> crearGasto(
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
-            @RequestBody GastosDtoRequest dto) {
+            @Valid @RequestBody GastosDtoRequest dto) {
         return new ResponseEntity<>(gastosService.create(dto, id_catgasto), HttpStatus.OK);
     }
 
@@ -64,7 +65,7 @@ public class GastosController {
     public ResponseEntity<GastosDto> actualizarGasto(
             @PathVariable(value = "id") Integer id,
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
-            @RequestBody GastosDtoRequest dto) {
+            @Valid @RequestBody GastosDtoRequest dto) {
         return new ResponseEntity<>(gastosService.update(id, dto, id_catgasto), HttpStatus.OK);
     }
 
