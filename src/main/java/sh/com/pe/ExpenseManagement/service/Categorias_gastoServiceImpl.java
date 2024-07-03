@@ -87,6 +87,7 @@ public class Categorias_gastoServiceImpl extends Mapper<Categorias_gasto, Catego
         pageableDataDto.setPageSize(categorias_gastosPage.getSize());
         pageableDataDto.setTotalElements(categorias_gastosPage.getTotalElements());
         pageableDataDto.setTotalPages(categorias_gastosPage.getTotalPages());
+        pageableDataDto.setFirst(categorias_gastosPage.isFirst());
         pageableDataDto.setLast(categorias_gastosPage.isLast());
 
         return pageableDataDto;

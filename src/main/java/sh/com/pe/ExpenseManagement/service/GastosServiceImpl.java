@@ -109,6 +109,7 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
         pageableDataDto.setPageSize(gastosPage.getSize());
         pageableDataDto.setTotalElements(gastosPage.getTotalElements());
         pageableDataDto.setTotalPages(gastosPage.getTotalPages());
+        pageableDataDto.setFirst(gastosPage.isFirst());
         pageableDataDto.setLast(gastosPage.isLast());
 
         return pageableDataDto;

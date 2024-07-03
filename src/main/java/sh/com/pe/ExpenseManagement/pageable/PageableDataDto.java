@@ -14,17 +14,19 @@ public class PageableDataDto<T> {
     private int pageSize;
     private long totalElements;
     private long totalPages;
+    private boolean first;
     private boolean last;
 
     public PageableDataDto() {
     }
 
-    public PageableDataDto(List<T> content, int pageNumber, int pageSize, long totalElements, long totalPages, boolean last) {
+    public PageableDataDto(List<T> content, int pageNumber, int pageSize, long totalElements, long totalPages, boolean first, boolean last) {
         this.content = content;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
+        this.first = first;
         this.last = last;
     }
 
@@ -66,6 +68,14 @@ public class PageableDataDto<T> {
 
     public void setTotalPages(long totalPages) {
         this.totalPages = totalPages;
+    }
+
+    public boolean isFirst() {
+        return first;
+    }
+
+    public void setFirst(boolean first) {
+        this.first = first;
     }
 
     public boolean isLast() {
