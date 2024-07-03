@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,13 +17,12 @@ import java.time.LocalDate;
  * @author shmen
  */
 @Entity
-@SequenceGenerator(name = "seq_generator_g", sequenceName = "GASTOS_SQC", initialValue = 1, allocationSize = 1)
 @Table(name = "GASTOS")
 public class Gastos implements Serializable {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "seq_generator_g", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "tipo_gasto", length = 100)
@@ -35,7 +33,7 @@ public class Gastos implements Serializable {
     private Categorias_gasto categorias_gasto;
 
     @Column(name = "gasto")
-    private double gasto;
+    private Double gasto;
 
     @Column(name = "cantidad")
     private Integer cantidad;
@@ -49,7 +47,7 @@ public class Gastos implements Serializable {
     public Gastos() {
     }
 
-    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, double gasto, Integer cantidad, Double total, LocalDate fecha) {
+    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, Double gasto, Integer cantidad, Double total, LocalDate fecha) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
@@ -83,11 +81,11 @@ public class Gastos implements Serializable {
         this.categorias_gasto = categorias_gasto;
     }
 
-    public double getGasto() {
+    public Double getGasto() {
         return gasto;
     }
 
-    public void setGasto(double gasto) {
+    public void setGasto(Double gasto) {
         this.gasto = gasto;
     }
 

@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,13 +17,12 @@ import java.util.Set;
  * @author shmen
  */
 @Entity
-@SequenceGenerator(name = "seq_generator_cg", sequenceName = "CATEGORIAS_GASTO_SQC", initialValue = 1, allocationSize = 1)
 @Table(name = "CATEGORIAS_GASTO")
 public class Categorias_gasto implements Serializable {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "seq_generator_cg", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "nombre", length = 50)
