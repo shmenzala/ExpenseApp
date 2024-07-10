@@ -35,7 +35,7 @@ public class Gastos implements Serializable {
     private Categorias_gasto categorias_gasto;
 
     @Column(name = "gasto")
-    private double gasto;
+    private Double gasto;
 
     @Column(name = "cantidad")
     private Integer cantidad;
@@ -46,10 +46,14 @@ public class Gastos implements Serializable {
     @Column(name = "fecha")
     private LocalDate fecha;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuarios")
+    private Usuarios usuarios;
+
     public Gastos() {
     }
 
-    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, double gasto, Integer cantidad, Double total, LocalDate fecha) {
+    public Gastos(int id, String tipo_gasto, Categorias_gasto categorias_gasto, Double gasto, Integer cantidad, Double total, LocalDate fecha, Usuarios usuarios) {
         this.id = id;
         this.tipo_gasto = tipo_gasto;
         this.categorias_gasto = categorias_gasto;
@@ -57,6 +61,7 @@ public class Gastos implements Serializable {
         this.cantidad = cantidad;
         this.total = total;
         this.fecha = fecha;
+        this.usuarios = usuarios;
     }
 
     public int getId() {
@@ -83,11 +88,11 @@ public class Gastos implements Serializable {
         this.categorias_gasto = categorias_gasto;
     }
 
-    public double getGasto() {
+    public Double getGasto() {
         return gasto;
     }
 
-    public void setGasto(double gasto) {
+    public void setGasto(Double gasto) {
         this.gasto = gasto;
     }
 
@@ -113,6 +118,14 @@ public class Gastos implements Serializable {
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public Usuarios getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(Usuarios usuarios) {
+        this.usuarios = usuarios;
     }
 
 }
