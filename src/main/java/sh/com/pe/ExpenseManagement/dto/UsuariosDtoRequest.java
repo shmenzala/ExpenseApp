@@ -4,16 +4,16 @@ package sh.com.pe.ExpenseManagement.dto;
  *
  * @author shmen
  */
-public class UsuariosRequestDto {
+public class UsuariosDtoRequest {
 
     private String username;
     private String email;
     private String password;
 
-    public UsuariosRequestDto() {
+    public UsuariosDtoRequest() {
     }
 
-    public UsuariosRequestDto(String username, String email, String password) {
+    public UsuariosDtoRequest(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;

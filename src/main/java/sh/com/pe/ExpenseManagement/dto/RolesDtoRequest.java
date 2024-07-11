@@ -4,14 +4,14 @@ package sh.com.pe.ExpenseManagement.dto;
  *
  * @author shmen
  */
-public class RolesRequestDto {
+public class RolesDtoRequest {
 
     private String nombre;
 
-    public RolesRequestDto() {
+    public RolesDtoRequest() {
     }
 
-    public RolesRequestDto(String nombre) {
+    public RolesDtoRequest(String nombre) {
         this.nombre = nombre;
     }
 

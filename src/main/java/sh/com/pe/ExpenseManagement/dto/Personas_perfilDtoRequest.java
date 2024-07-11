@@ -6,7 +6,7 @@ import java.time.LocalDate;
  *
  * @author shmen
  */
-public class Personas_perfilRequestDto {
+public class Personas_perfilDtoRequest {
 
     private String nombres;
     private String apellidos;
@@ -14,10 +14,10 @@ public class Personas_perfilRequestDto {
     private LocalDate fecha_nacimiento;
     private String fotografia;
 
-    public Personas_perfilRequestDto() {
+    public Personas_perfilDtoRequest() {
     }
 
-    public Personas_perfilRequestDto(String nombres, String apellidos, String genero, LocalDate fecha_nacimiento, String fotografia) {
+    public Personas_perfilDtoRequest(String nombres, String apellidos, String genero, LocalDate fecha_nacimiento, String fotografia) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.genero = genero;
