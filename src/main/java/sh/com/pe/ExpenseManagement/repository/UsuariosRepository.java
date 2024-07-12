@@ -11,4 +11,6 @@ import sh.com.pe.ExpenseManagement.model.Usuarios;
 @Repository
 public interface UsuariosRepository extends JpaRepository<Usuarios, Integer> {
 
+    public boolean existsByEmail(String email);
+    
 }
