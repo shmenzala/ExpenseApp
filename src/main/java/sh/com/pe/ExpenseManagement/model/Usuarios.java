@@ -39,7 +39,7 @@ public class Usuarios implements Serializable {
     @Column(name = "email", length = 255)
     private String email;
 
-    @Column(name = "password", length = 30)
+    @Column(name = "password", length = 60)
     private String password;
 
     @OneToOne(cascade = {CascadeType.ALL})
