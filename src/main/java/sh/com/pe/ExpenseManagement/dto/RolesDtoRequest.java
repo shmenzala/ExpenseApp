@@ -1,11 +1,14 @@
 package sh.com.pe.ExpenseManagement.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  *
  * @author shmen
  */
 public class RolesDtoRequest {
 
+    @NotBlank(message = "El campo nombre no debe estar vacío")
     private String nombre;
 
     public RolesDtoRequest() {
