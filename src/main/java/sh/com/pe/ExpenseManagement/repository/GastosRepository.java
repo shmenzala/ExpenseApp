@@ -1,6 +1,9 @@
 package sh.com.pe.ExpenseManagement.repository;
 
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -36,6 +39,10 @@ public interface GastosRepository extends JpaRepository<Gastos, Integer> {
                     FROM Gastos g
                     JOIN g.categorias_gasto cg
                     WHERE g.total = (SELECT MIN(g2.total) FROM Gastos g2)""")
-    public List<Resumen_gastos_totalesDto> obtenerResumenGastosTotalesMinimos();
-
+    public List<Resumen_gastos_totalesDto> obtenerResumenGastosTotalesMinimos();    
+    
+    public Page<Gastos> findAllByUsuarios_Id(Integer usuarioId, Pageable pageable);
+    
+    public Optional<Gastos> findByIdAndUsuarios_Id(Integer Id, Integer usuarioId);
+    
 }
