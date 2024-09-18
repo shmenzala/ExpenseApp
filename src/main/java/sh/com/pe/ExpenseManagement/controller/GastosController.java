@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ import sh.com.pe.ExpenseManagement.service.GastosService;
 @RestController
 @RequestMapping("/api/v1/gastos")
 @CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasRole('ADMIN')")
 public class GastosController {
 
     private final GastosService gastosService;
@@ -36,11 +38,24 @@ public class GastosController {
         this.gastosService = gastosService;
     }
 
-    @PostMapping("/{id_catgasto}")
+    @PostMapping("/{id_catgasto}/{id_usuario}")
+    @PreAuthorize("(hasRole('USER') and #id_usuario == principal.id) or hasRole('ADMIN')")
     public ResponseEntity<GastosDto> crearGasto(
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
+            @PathVariable(value = "id_usuario") Integer id_usuario,
             @Valid @RequestBody GastosDtoRequest dto) {
-        return new ResponseEntity<>(gastosService.create(dto, id_catgasto), HttpStatus.OK);
+        return new ResponseEntity<>(gastosService.create(dto, id_catgasto, id_usuario), HttpStatus.OK);
+    }
+
+    @GetMapping("/allp/{id_usuario}")
+    @PreAuthorize("(hasRole('USER') and #id_usuario == principal.id) or hasRole('ADMIN')")
+    public ResponseEntity<PageableDataDto> listarCategorias_gastoPaginadosPorUsuario(
+            @RequestParam(value = "pageNumber", defaultValue = PageableValues.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = PageableValues.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = PageableValues.DEFAULT_ORDER_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = PageableValues.DEFAULT_ORDER_DIRECTION, required = false) String sortDir,
+            @PathVariable(value = "id_usuario") Integer id_usuario) {
+        return new ResponseEntity<>(gastosService.findAllPagination(id_usuario, pageNumber, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
     @GetMapping
@@ -63,18 +78,22 @@ public class GastosController {
         return new ResponseEntity<>(gastosService.findById(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/{id_catgasto}")
+    @PutMapping("/{id}/{id_catgasto}/{id_usuario}")
+    @PreAuthorize("(hasRole('USER') and #id_usuario == principal.id) or hasRole('ADMIN')")
     public ResponseEntity<GastosDto> actualizarGasto(
             @PathVariable(value = "id") Integer id,
             @PathVariable(value = "id_catgasto") Integer id_catgasto,
+            @PathVariable(value = "id_usuario") Integer id_usuario,
             @Valid @RequestBody GastosDtoRequest dto) {
-        return new ResponseEntity<>(gastosService.update(id, dto, id_catgasto), HttpStatus.OK);
+        return new ResponseEntity<>(gastosService.update(id, dto, id_catgasto, id_usuario), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/{id_usuario}")
+    @PreAuthorize("(hasRole('USER') and #id_usuario == principal.id) or hasRole('ADMIN')")
     public ResponseEntity<String> eliminarGasto(
-            @PathVariable(value = "id") Integer id) {
-        gastosService.delete(id);
+            @PathVariable(value = "id") Integer id,
+            @PathVariable(value = "id_usuario") Integer id_usuario) {
+        gastosService.delete(id, id_usuario);
         return new ResponseEntity<>("Eliminación exitosa del gasto", HttpStatus.OK);
     }
 

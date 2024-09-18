@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,8 @@ import sh.com.pe.ExpenseManagement.service.Personas_perfilService;
  */
 @RestController
 @RequestMapping("/api/v1/pp")
+@CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasRole('ADMIN')")
 public class Personas_perfilController {
 
     private final Personas_perfilService personas_perfilService;
@@ -60,6 +64,7 @@ public class Personas_perfilController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("(hasRole('USER') and #id == principal.id) or hasRole('ADMIN')")
     public ResponseEntity<Personas_perfilDto> actualizarPersona_perfil(
             @PathVariable(value = "id") Integer id,
             @Valid @RequestBody Personas_perfilDtoRequest dto) {

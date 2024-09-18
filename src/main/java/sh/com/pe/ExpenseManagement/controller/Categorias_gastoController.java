@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import sh.com.pe.ExpenseManagement.service.Categorias_gastoService;
 @RestController
 @RequestMapping("/api/v1/categorias_gasto")
 @CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasRole('ADMIN')")
 public class Categorias_gastoController {
 
     private final Categorias_gastoService categorias_gastoService;
