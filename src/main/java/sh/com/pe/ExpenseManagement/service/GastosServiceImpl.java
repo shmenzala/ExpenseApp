@@ -17,9 +17,11 @@ import sh.com.pe.ExpenseManagement.dto.Resumen_gastos_totalesDto;
 import sh.com.pe.ExpenseManagement.exceptions.ResourceNotFoundException;
 import sh.com.pe.ExpenseManagement.model.Categorias_gasto;
 import sh.com.pe.ExpenseManagement.model.Gastos;
+import sh.com.pe.ExpenseManagement.model.Usuarios;
 import sh.com.pe.ExpenseManagement.pageable.PageableDataDto;
 import sh.com.pe.ExpenseManagement.repository.Categorias_gastoRepository;
 import sh.com.pe.ExpenseManagement.repository.GastosRepository;
+import sh.com.pe.ExpenseManagement.repository.UsuariosRepository;
 
 /**
  *
@@ -32,14 +34,20 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
 
     private final Categorias_gastoRepository categorias_gastoRepository;
 
-    public GastosServiceImpl(GastosRepository gastosRepository, Categorias_gastoRepository categorias_gastoRepository, ModelMapper modelMapper) {
+    private final UsuariosRepository usuariosRepository;
+
+    public GastosServiceImpl(GastosRepository gastosRepository, Categorias_gastoRepository categorias_gastoRepository, UsuariosRepository usuariosRepository, ModelMapper modelMapper) {
         super(modelMapper);
         this.gastosRepository = gastosRepository;
         this.categorias_gastoRepository = categorias_gastoRepository;
+        this.usuariosRepository = usuariosRepository;
     }
 
     @Override
-    public GastosDto create(GastosDtoRequest dto, Integer id_catgasto) {
+    public GastosDto create(GastosDtoRequest dto, Integer id_catgasto, Integer id_usuario) {
+        Usuarios usuario = usuariosRepository.findById(id_usuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuarios", "id", id_usuario.toString()));
+        
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
@@ -48,7 +56,8 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
         gasto.setCategorias_gasto(categorias_gasto);
         gasto.setTotal(dto.getGasto() * dto.getCantidad());
         gasto.setFecha(LocalDate.now());
-        
+        gasto.setUsuarios(usuario);
+
         Gastos nuevoGasto = gastosRepository.save(gasto);
 
         return toDto(nuevoGasto, GastosDto.class);
@@ -59,7 +68,7 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
         List<Gastos> gastos = gastosRepository.findAll();
         return gastos.stream().map(gasto -> toDto(gasto, GastosDto.class)).collect(Collectors.toList());
     }
-
+    
     @Override
     public GastosDto findById(Integer id) {
         Gastos gasto = gastosRepository.findById(id)
@@ -68,10 +77,12 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
     }
 
     @Override
-    public GastosDto update(Integer id, GastosDtoRequest dto, Integer id_catgasto) {
-        Gastos gasto = gastosRepository.findById(id)
+    public GastosDto update(Integer id, GastosDtoRequest dto, Integer id_catgasto, Integer id_usuario) {
+        Gastos gasto = gastosRepository.findByIdAndUsuarios_Id(id, id_usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
-
+        
+        System.out.println(gasto.getUsuarios().getUsername());
+        
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
@@ -87,16 +98,54 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
     }
 
     @Override
-    public void delete(Integer id) {
-        Gastos gasto = gastosRepository.findById(id)
+    public void delete(Integer id, Integer id_usuario) {
+        Gastos gasto = gastosRepository.findByIdAndUsuarios_Id(id, id_usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
         gastosRepository.delete(gasto);
     }
 
     @Override
-    public PageableDataDto<GastosDto> findAllPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PageableDataDto<GastosDto> findAllPagination(Integer id_usuario, int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Usuarios usuario = usuariosRepository.findById(id_usuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuarios", "id", id_usuario.toString()));
+        
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Gastos> gastosPage = gastosRepository.findAllByUsuarios_Id(usuario.getId(), pageable);
+
+        List<GastosDto> content = gastosPage.getContent().stream().map(gasto -> toDto(gasto, GastosDto.class)).collect(Collectors.toList());
+
+        PageableDataDto pageableDataDto = new PageableDataDto();
+
+        pageableDataDto.setContent(content);
+        pageableDataDto.setPageNumber(gastosPage.getNumber());
+        pageableDataDto.setPageSize(gastosPage.getSize());
+        pageableDataDto.setTotalElements(gastosPage.getTotalElements());
+        pageableDataDto.setTotalPages(gastosPage.getTotalPages());
+        pageableDataDto.setFirst(gastosPage.isFirst());
+        pageableDataDto.setLast(gastosPage.isLast());
+
+        return pageableDataDto;
+    }
+
+    @Override
+    public ResumenDto showSummary() {
+        List<Resumen_gastos_totalesDto> mayoresDtos = gastosRepository.obtenerResumenGastosTotalesMaximos();
+        List<Resumen_gastos_totalesDto> menoresDtos = gastosRepository.obtenerResumenGastosTotalesMinimos();
+
+        ResumenDto resumenDto = new ResumenDto();
+
+        resumenDto.setGastos_totales_maximos(mayoresDtos);
+        resumenDto.setGastos_totales_minimos(menoresDtos);
+
+        return resumenDto;
+    }
+
+    @Override
+    public PageableDataDto<GastosDto> findAllPagination(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
         Page<Gastos> gastosPage = gastosRepository.findAll(pageable);
 
@@ -126,16 +175,8 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
     }
     
     @Override
-    public ResumenDto showSummary() {
-        List<Resumen_gastos_totalesDto> mayoresDtos = gastosRepository.obtenerResumenGastosTotalesMaximos();
-        List<Resumen_gastos_totalesDto> menoresDtos = gastosRepository.obtenerResumenGastosTotalesMinimos();
-
-        ResumenDto resumenDto = new ResumenDto();
-
-        resumenDto.setGastos_totales_maximos(mayoresDtos);
-        resumenDto.setGastos_totales_minimos(menoresDtos);
-
-        return resumenDto;
+    public void delete(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
