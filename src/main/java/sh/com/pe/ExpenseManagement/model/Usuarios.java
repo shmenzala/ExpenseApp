@@ -16,8 +16,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  *
@@ -26,7 +31,7 @@ import java.util.Set;
 @Entity
 @SequenceGenerator(name = "seq_generator_u", sequenceName = "USUARIOS_SQC", initialValue = 1, allocationSize = 1)
 @Table(name = "USUARIOS")
-public class Usuarios implements Serializable {
+public class Usuarios implements Serializable, UserDetails {
 
     @Id
     @Column(name = "id")
@@ -76,6 +81,7 @@ public class Usuarios implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -92,6 +98,7 @@ public class Usuarios implements Serializable {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -122,6 +129,32 @@ public class Usuarios implements Serializable {
 
     public void setGastos(Set<Gastos> gastos) {
         this.gastos = gastos;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream().map(rol -> new SimpleGrantedAuthority(rol.getNombre()))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
 }
