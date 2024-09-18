@@ -81,8 +81,6 @@ public class GastosServiceImpl extends Mapper<Gastos, GastosDto, GastosDtoReques
         Gastos gasto = gastosRepository.findByIdAndUsuarios_Id(id, id_usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Gastos", "id", id.toString()));
         
-        System.out.println(gasto.getUsuarios().getUsername());
-        
         Categorias_gasto categorias_gasto = categorias_gastoRepository.findById(id_catgasto)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorias_gasto", "id", id_catgasto.toString()));
 
