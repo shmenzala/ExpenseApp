@@ -62,6 +62,10 @@ public class Usuarios implements Serializable, UserDetails {
     @OneToMany(mappedBy = "usuarios")
     private Set<Gastos> gastos = new HashSet<>();
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "usuarios")
+    private Set<Token> tokens = new HashSet<>();
+
     public Usuarios() {
     }
 
@@ -155,6 +159,14 @@ public class Usuarios implements Serializable, UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Set<Token> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(Set<Token> tokens) {
+        this.tokens = tokens;
     }
 
 }
