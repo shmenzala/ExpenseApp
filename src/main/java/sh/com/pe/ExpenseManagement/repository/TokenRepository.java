@@ -19,13 +19,13 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
                     SELECT t 
                     FROM Token t
                     JOIN t.usuarios u
-                    WHERE u.id = :usuarioId AND (t.expired = 0 OR t.revoked = 0)""",
+                    WHERE (u.id = :usuarioId AND t.deviceid = :deviceId) AND (t.expired = 0 OR t.revoked = 0)""",
             countQuery = """
                     SELECT COUNT(t) 
                     FROM Token t
                     JOIN t.usuarios u
-                    WHERE u.id = :usuarioId AND (t.expired = 0 OR t.revoked = 0)""")
-    public List<Token> findAllValidTokensByUsuarios(@Param("usuarioId") Integer usuarioId);
+                    WHERE (u.id = :usuarioId AND t.deviceid = :deviceId) AND (t.expired = 0 OR t.revoked = 0)""")
+    public List<Token> findAllValidTokensByUsuarios(@Param("usuarioId") Integer usuarioId, @Param("deviceId") String devideId);
 
     public Optional<Token> findByToken(String token);
 
