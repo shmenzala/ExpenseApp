@@ -1,5 +1,7 @@
 package sh.com.pe.ExpenseManagement.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,13 +30,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<JwtAuthenticationDto> registerUser(@Valid @RequestBody RegisterDtoRequest dto) {
-        return ResponseEntity.ok(authenticationService.register(dto));
+    public ResponseEntity<JwtAuthenticationDto> registerUser(@Valid @RequestBody RegisterDtoRequest dto, HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authenticationService.register(dto, request, response));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationDto> authenticateUser(@Valid @RequestBody LoginDtoRequest dto) {
-        return ResponseEntity.ok(authenticationService.authenticate(dto));
+    public ResponseEntity<JwtAuthenticationDto> authenticateUser(@Valid @RequestBody LoginDtoRequest dto, HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authenticationService.authenticate(dto, request, response));
     }
 
 }

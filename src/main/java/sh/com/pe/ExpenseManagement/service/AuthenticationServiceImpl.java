@@ -1,8 +1,12 @@
 package sh.com.pe.ExpenseManagement.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtAuthenticationDto register(RegisterDtoRequest dto) {
+    public JwtAuthenticationDto register(RegisterDtoRequest dto, HttpServletRequest request, HttpServletResponse response) {
         if (usuariosRepository.existsByEmail(dto.getEmail())) {
             throw new ResourceAlreadyExistsException("Usuario", "email", dto.getEmail());
         }
@@ -87,14 +91,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Usuarios nuevoUsuario = usuariosRepository.save(usuario);
 
         String token = jwtTokenProvider.generateToken(nuevoUsuario);
-
-        saveCurrentUserToken(token, nuevoUsuario);
         
+        saveCurrentUserToken(token, nuevoUsuario, request, response);
+
         return new JwtAuthenticationDto(token);
     }
 
     @Override
-    public JwtAuthenticationDto authenticate(LoginDtoRequest dto) {
+    public JwtAuthenticationDto authenticate(LoginDtoRequest dto, HttpServletRequest request, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         dto.getUsername(),
@@ -107,37 +111,62 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String token = jwtTokenProvider.generateToken(usuario);
 
-        revokeAllUserTokens(usuario);
-        saveCurrentUserToken(token, usuario);
-        
+        revokeAllUserTokens(usuario, request, response);
+        saveCurrentUserToken(token, usuario, request, response);
+
         return new JwtAuthenticationDto(token);
     }
 
-    private void saveCurrentUserToken(String token, Usuarios usuario) {
+    private void saveCurrentUserToken(String token, Usuarios usuario, HttpServletRequest request, HttpServletResponse response) {
         Token newToken = new Token();
-
+        
         newToken.setToken(token);
         newToken.setToken_type(TokenType.BEARER);
         newToken.setExpired(0);
         newToken.setRevoked(0);
         newToken.setUsuarios(usuario);
-
+        newToken.setDeviceid(getDeviceIdFromCookie(request, response));
+        
         tokenRepository.save(newToken);
     }
-    
-    private void revokeAllUserTokens(Usuarios usuario){
-        List<Token> validTokens = tokenRepository.findAllValidTokensByUsuarios(usuario.getId());
+
+    private void revokeAllUserTokens(Usuarios usuario, HttpServletRequest request, HttpServletResponse response) {
+        List<Token> validTokens = tokenRepository.findAllValidTokensByUsuarios(usuario.getId(), getDeviceIdFromCookie(request, response));
         
-        if (validTokens.isEmpty()){
+        if (validTokens.isEmpty()) {
             return;
         }
-        
+
         validTokens.forEach(vt -> {
             vt.setExpired(1);
             vt.setRevoked(1);
         });
-        
+
         tokenRepository.saveAll(validTokens);
     }
 
+    private String getDeviceIdFromCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("deviceId".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        String deviceId = UUID.randomUUID().toString();
+        setDeviceIdCookie(response, deviceId);
+        return deviceId;
+    }
+
+    private void setDeviceIdCookie(HttpServletResponse response, String deviceId) {
+        Cookie deviceIdCookie = new Cookie("deviceId", deviceId);
+        deviceIdCookie.setHttpOnly(true);
+        deviceIdCookie.setSecure(true);
+        deviceIdCookie.setMaxAge(60 * 60 * 24 * 365);
+        deviceIdCookie.setPath("/");
+        response.addCookie(deviceIdCookie);
+    }
+    
 }
